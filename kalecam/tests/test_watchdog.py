@@ -44,6 +44,7 @@ class World:
         self.server_up = True
         self.server_can_start = True
         self.tunnel_ok = True           # does the public URL reach the server?
+        self.tunnel_ratelimited = False  # Cloudflare answers new quick tunnels with 429
         self.kill_server_on_tunnel_spawn = False
         self.instances = itertools.count(1)
         self.instance = f"inst-{next(self.instances)}"
@@ -67,6 +68,10 @@ class World:
                 self.alive[pid] = "server.py"
         else:
             self.events.append("start-tunnel")
+            if self.tunnel_ratelimited:  # cloudflared exits at once
+                Path(logfile).write_text("INF Requesting new quick Tunnel on trycloudflare.com...\n"
+                                         "failed to request quick Tunnel: quick tunnel provisioning failed with status 429\n")
+                return pid
             self.alive[pid] = "cloudflared"
             Path(logfile).write_text(f"INF |  {self.next_url}  |\nINF Registered tunnel connection\n")
             self.tunnel_ok = True
@@ -189,6 +194,18 @@ class WatchdogOrderTest(unittest.TestCase):
         srv, url, ok = self.run_pass()
         self.assertTrue(ok)
         self.assertIn("start-tunnel", self.w.events)
+
+    def test_quick_tunnel_rate_limit_reported_then_cleared(self):
+        self.w.alive.pop(1)
+        self.w.tunnel_ratelimited = True
+        srv, url, ok = self.run_pass()
+        self.assertFalse(ok)
+        self.assertIn("429", self.st.get("tunnel_error", ""))
+        self.assertNotIn("start-server", self.w.events)  # server was fine; not touched
+        self.w.tunnel_ratelimited = False
+        srv, url, ok = self.run_pass()
+        self.assertTrue(ok)
+        self.assertNotIn("tunnel_error", self.st)
 
 
 class PublishBackoffTest(unittest.TestCase):

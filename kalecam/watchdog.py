@@ -315,11 +315,18 @@ def start_tunnel(cfg: dict, st: dict, srv: Server) -> str | None:
         if url and "Registered tunnel connection" in txt:
             break
         if not K.pid_alive(pid, "cloudflared"):
-            log("cloudflared exited during startup: " + txt[-400:].replace("\n", " | "))
+            if "429" in txt and "quick tunnel" in txt.lower():
+                st["tunnel_error"] = f"Cloudflare rate limit (HTTP 429) at {K.iso(K.now_local())}; retrying every watchdog run"
+                log("Cloudflare is rate-limiting new quick tunnels from this computer (HTTP 429). Nothing is broken "
+                    "locally; the watchdog retries on every run and this usually clears within an hour.")
+            else:
+                st["tunnel_error"] = f"cloudflared exited during startup at {K.iso(K.now_local())} (see logs/watchdog.log)"
+                log("cloudflared exited during startup: " + txt[-400:].replace("\n", " | "))
             return None
     if not url:
         log("cloudflared started but no URL appeared within 90 s")
         return None
+    st.pop("tunnel_error", None)
     K.URL_PATH.write_text(url + "\n")
     log(f"tunnel started pid={pid} url={url}; waiting for public reachability")
     time.sleep(3)

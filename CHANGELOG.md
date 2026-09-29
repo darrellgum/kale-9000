@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- **Clear tunnel errors**: when Cloudflare rate-limits new quick tunnels (HTTP 429) the watchdog says so
+  in its log and in `kalecam status` (and keeps retrying once per run); `kalecam pair` explains what to
+  do when there is no public address yet.
+- `kalecam status` prints `n/a` instead of `None` for fields a camera hasn't reported yet.
+
 ## 1.0.0 (2026-09-29)
 
 First public release.

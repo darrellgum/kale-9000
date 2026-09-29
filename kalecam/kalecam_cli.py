@@ -99,7 +99,7 @@ def gather_status(check: bool) -> dict:
     url = K.current_url()
     out["tunnel"] = {"url": url, "cloudflared_pid": wd.get("cloudflared_pid"),
                      "cloudflared_alive": K.pid_alive(wd.get("cloudflared_pid"), "cloudflared"),
-                     "started_at": wd.get("cloudflared_started_at")}
+                     "started_at": wd.get("cloudflared_started_at"), "error": wd.get("tunnel_error")}
     if check and url:
         try:
             with urllib.request.urlopen(url + "/healthz", timeout=10) as r:
@@ -180,7 +180,8 @@ def cmd_status(a) -> int:
     print(f"server:    {'UP' if srv.get('ok') else 'DOWN'}" + (f" (instance {srv.get('instance')}, up {srv.get('uptime_s')}s)" if srv.get("ok") else f" {srv.get('error')}"))
     t = s["tunnel"]
     pub = "" if "public_ok" not in t else (" public:OK" if t["public_ok"] else f" public:FAIL")
-    print(f"tunnel:    {'UP' if t['cloudflared_alive'] else 'DOWN'} {t['url']}{pub}")
+    print(f"tunnel:    {'UP' if t['cloudflared_alive'] else 'DOWN'} {t['url'] or '(no address yet)'}{pub}"
+          + (f"  last error: {t['error']}" if t.get("error") and not t["cloudflared_alive"] else ""))
     w = s["watchdog"]
     print(f"watchdog:  loop {'running pid ' + str(w['loop_pid']) if w['loop_alive'] else 'NOT running'}; last run {w['last_run_at']} ok={w['last_run_ok']}")
     r = s["rendezvous"]
@@ -196,9 +197,11 @@ def cmd_status(a) -> int:
             continue
         b = c.get("battery") or {}
         bl = f"{round(b['level'] * 100)}%{' charging' if b.get('charging') else ''}" if isinstance(b.get("level"), (int, float)) else "n/a"
-        print(f"camera {cam}: heartbeat {c.get('heartbeat_age_s', 'never')}s ago, last poll {c.get('last_poll_age_s')}s ago, "
-              f"battery {bl}, temp {c.get('temperature_c') or 'n/a'}, queue {c.get('queue')}, last capture {c.get('last_capture')}, "
-              f"app {c.get('app_version')}, wake lock {c.get('wake_lock')}")
+        na = lambda v: "n/a" if v is None else v  # noqa: E731
+        lp = c.get("last_poll_age_s")
+        print(f"camera {cam}: heartbeat {c.get('heartbeat_age_s', 'never')}s ago, last poll {'n/a' if lp is None else str(lp) + 's ago'}, "
+              f"battery {bl}, temp {c.get('temperature_c') or 'n/a'}, queue {na(c.get('queue'))}, last capture {na(c.get('last_capture'))}, "
+              f"app {na(c.get('app_version'))}, wake lock {na(c.get('wake_lock'))}")
         for wmsg in c.get("warnings", []):
             print(f"   WARNING: {wmsg}")
     if s["pending_commands"] or s["delivered_commands"]:
@@ -284,7 +287,8 @@ def cmd_pair(a) -> int:
                        [str(K.BASE / "watchdog.sh"), "--quiet"], check=False)
         url = K.current_url()
     if not url:
-        sys.exit("no tunnel URL yet; check logs/watchdog.log")
+        sys.exit("no public address yet (see `kalecam status` and logs/watchdog.log). The watchdog keeps retrying; "
+                 "run this pair command again in a few minutes.")
     link, version = K.write_pairing_qr(pairing, url, plant, camera)
     print(f"QR code: {K.QR_PATH}  (version {version}, contains the pairing secret; chmod 600)")
     print("The watchdog refreshes this QR/link automatically whenever the tunnel URL changes.")
