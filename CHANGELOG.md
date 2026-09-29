@@ -1,7 +1,16 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 (2026-09-29)
 
+- **Skill reference in the release**: new `reference/` folder with the full text of the four plant
+  skills (`plant-photo-diagnosis.md`, `growth-stage-tracker.md`, `grow-environment-targets.md`,
+  `plant-onboarding-interview.md`): symptom tables, stage durations and targets, lookalikes,
+  toxicity list, formulas. The template's skills are now slim and point here.
+- **Installer**: `install.sh` copies `reference/` to `<prefix>/reference/` (default
+  `/workspace/kalecam/reference/`) on install, on upgrade, and with `--no-start`.
+- **Profile template**: `profiles/PROFILE-TEMPLATE.md` now has the `light_environment` block
+  (setting, light, schedule, estimated DLI, `heat_welcome`, climate, sources) after `location`,
+  matching the onboarding skill.
 - **Clear tunnel errors**: when Cloudflare rate-limits new quick tunnels (HTTP 429) the watchdog says so
   in its log and in `kalecam status` (and keeps retrying once per run); `kalecam pair` explains what to
   do when there is no public address yet.

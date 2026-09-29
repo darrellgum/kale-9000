@@ -2,7 +2,7 @@
 
 How plant photos get from a spare phone to the bot's own computer, how they're named and indexed, how they're thinned over time so the disk doesn't fill up, and how the bot turns them into care advice.
 
-> Status: **implemented** (v1.0.0). Capture is the kalecam phone web app + quick-tunnel server described in §6 and in `../README.md` (technical reference).
+> Status: **implemented** (v1.0.1). Capture is the kalecam phone web app + quick-tunnel server described in §6 and in `../README.md` (technical reference).
 
 ---
 

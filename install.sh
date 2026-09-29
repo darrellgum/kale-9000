@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# KALE 9000 installer. Copies the capture runtime (kalecam/) to PREFIX and starts it.
+# KALE 9000 installer. Copies the capture runtime (kalecam/) and the skill reference (reference/) to PREFIX, then starts it.
 # Safe to re-run: an existing install keeps its config.json, pairing secrets, state, logs, venv
 # and cloudflared binary, so the phone stays paired. Re-running with a newer release upgrades it.
 #
@@ -75,6 +75,15 @@ while IFS= read -r -d '' f; do
   changed=$((changed + 1))
 done < <(find "$SRC" -type f -print0)
 cp "$HERE/VERSION" "$PREFIX/VERSION.new.$$" && mv -f "$PREFIX/VERSION.new.$$" "$PREFIX/VERSION"
+# skill reference (full text behind the template's slim skills): <prefix>/reference/*.md, always copied
+if [ -d "$HERE/reference" ]; then
+  mkdir -p "$PREFIX/reference"
+  for f in "$HERE"/reference/*.md; do
+    [ -f "$f" ] || continue
+    dest="$PREFIX/reference/$(basename "$f")"
+    cmp -s "$f" "$dest" 2>/dev/null || { cp "$f" "$dest.new.$$" && mv -f "$dest.new.$$" "$dest"; }
+  done
+fi
 for d in README.md LICENSE CHANGELOG.md; do [ -f "$HERE/$d" ] && cp "$HERE/$d" "$PREFIX/docs/$d" 2>/dev/null || true; done
 chmod 755 "$PREFIX/watchdog.sh" "$PREFIX/watchdog.py" "$PREFIX/kalecam" "$PREFIX/kalecam_cli.py" "$PREFIX/server.py" "$PREFIX/rotate.py"
 mkdir -p "$PREFIX/state" "$PREFIX/logs"; mkdir -p -m 700 "$PREFIX/secrets"; chmod 700 "$PREFIX/secrets"

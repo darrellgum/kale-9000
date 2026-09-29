@@ -21,6 +21,37 @@ location:
   camera_regions:                    # which part of each camera frame is this plant
     - camera: <camera>
       region: <e.g. "left third" or x,y,w,h as fractions of the frame: 0.00,0.10,0.35,0.80>
+light_environment:                   # shared by every plant in the pod
+  setting: <indoor-room | tent | greenhouse | covered-outdoor | open-outdoor | unknown>
+  setting_detail: <e.g. "2x2 ft tent", "east-facing porch", or null>
+  light:
+    type: <sun | grow-light | both | unknown>
+    fixture: <make/model or short description, or unknown>
+    actual_watts: <n or null>
+    advertised_watts: <n or null>    # "equivalent" figure, if that's what the label shows
+    modes: [<veg | bloom | full | ...>]   # [] if single-spectrum
+    current_mode: <mode or null>
+    dimmable: <yes | no | unknown>
+    dim_level: <e.g. "75%" or null>
+  schedule:
+    control: <always-on | timer | bridge | manual | sun-only | unknown>
+    on: <HH:MM or null>
+    off: <HH:MM or null>
+    photoperiod_h: <n or null>       # outdoor / sun-only: null (day length is used instead)
+  estimated_dli_mol_m2_day: <n, min-max, or null>
+  heat_welcome: <welcome | neutral | problem | unknown>
+  climate:
+    region: <e.g. "hot dry summers, mild winters", or unknown>
+    zip: <only if the owner offered it, else null>
+    forecast_checks: <yes | no>      # yes for greenhouse / covered-outdoor / open-outdoor
+  sources:                           # per field: where it came from, how sure
+    setting: {source: <owner | photo | inferred>, confidence: <high | medium | low>}
+    light: {source: <label-photo | owner | spec-lookup | photo | inferred>, confidence: <...>}
+    schedule: {source: <owner | bridge | photo-timestamps | inferred>, confidence: <...>}
+    estimated_dli: {source: <ppfd-map | watts-estimate | sensor | sun-estimate>, confidence: <...>}
+    heat_welcome: {source: <owner | inferred>, confidence: <...>}
+    climate: {source: <owner | forecast | inferred>, confidence: <...>}
+  last_checked: <YYYY-MM-DD>
 owner_goal: <what success looks like, in the owner's words>
 constraints:                         # empty list if none
   - <pets: cat | dog | none>

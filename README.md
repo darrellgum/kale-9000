@@ -7,7 +7,9 @@ replace it.
 This repository is the **code** behind the KALE 9000 Grok Bot template: the phone-camera system
 ("kalecam"), the photo rotation tool, plant profile templates, and an optional home bridge for smart
 plugs. The bot's knowledge (plant diagnosis, growth stages, environment targets, onboarding) lives in
-the template's skills; the bot downloads and installs this code by itself.
+the template's skills, which are kept short; their full reference text (symptom tables, stage
+targets, formulas) is in `reference/` and is installed to `/workspace/kalecam/reference/`. The bot
+downloads and installs this code by itself.
 
 ```
  spare phone on a stand         the bot's own computer                     you
@@ -83,8 +85,8 @@ Needs Python 3.10+ with `venv`, `flock`/`setsid` (util-linux), and outbound HTTP
 
 ```bash
 # download kale-9000-<version>.tar.gz from this repository's Releases page, then:
-sha256sum kale-9000-1.0.0.tar.gz          # compare with the checksum on the release page
-tar -xzf kale-9000-1.0.0.tar.gz && cd kale-9000-1.0.0
+sha256sum kale-9000-1.0.1.tar.gz          # compare with the checksum on the release page
+tar -xzf kale-9000-1.0.1.tar.gz && cd kale-9000-1.0.1
 ./install.sh                              # installs to /workspace/kalecam and starts it
 /workspace/kalecam/kalecam pair --plant basil-01 --camera phone-1   # prints the pairing link (secret!)
 ```
@@ -123,6 +125,7 @@ one version and checked against a SHA-256 checksum** before use.
 |---|---|
 | `install.sh` | Installer / upgrader / uninstaller |
 | `kalecam/` | Everything installed on the bot's computer: capture server, watchdog, `kalecam` CLI, phone web app (`app/`), encrypted rendezvous, `rotate.py`, `profiles/`, `docs/`, `tests/`. Technical reference: [`kalecam/README.md`](kalecam/README.md) |
+| `reference/` | Full reference text for the plant skills (diagnosis, growth stages, environment targets, onboarding); installed to `<prefix>/reference/` |
 | `kalecam/docs/DESIGN.md` | How photos, profiles, reviews and the watchdog fit together |
 | `bridge/` | Reference home bridge `kalebridge` for smart plugs (beta) |
 
