@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="referrer" content="no-referrer">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Plant Cam</title>
+<link rel="manifest" href="/app/manifest.webmanifest">
+<link rel="icon" href="/app/icon-192.png">
+<link rel="apple-touch-icon" href="/app/icon-192.png">
+<link rel="stylesheet" href="/app/style.css">
+</head>
+<body>
+<video id="preview" playsinline muted autoplay></video>
+<div id="dim" hidden><p>Dimmed. Tap to wake the display.</p></div>
+
+<section id="unpaired" class="panel" hidden>
+  <h1>Plant Cam</h1>
+  <p>This phone isn't paired yet.</p>
+  <p>On the plant bot's computer run <code>kalecam pair</code>, then scan the QR code it makes (or open the link it prints) on this phone.</p>
+</section>
+
+<section id="camperm" class="panel" hidden>
+  <h1>Camera access needed</h1>
+  <p id="campermMsg">Tap the button and choose <b>Allow</b>. If you blocked it earlier, open the browser's site settings for this page and allow the camera.</p>
+  <button id="btnAllowCam" class="big">Allow camera</button>
+</section>
+
+<main id="main" hidden>
+  <header id="bar">
+    <span id="dot" class="dot"></span>
+    <span id="connText">Starting...</span>
+    <span class="spacer"></span>
+    <span id="kale" class="kale">KALE 9000 is watching.</span>
+  </header>
+  <div id="info">
+    <div><span>Last photo</span><b id="lastPhoto">none yet</b></div>
+    <div><span>Queue</span><b id="queue">0</b></div>
+    <div><span>Battery</span><b id="battery">n/a</b></div>
+    <div><span>Next photo</span><b id="nextShot">-</b></div>
+    <div><span>Screen awake</span><b id="wake">-</b></div>
+    <div><span>Camera</span><b id="camInfo">-</b></div>
+  </div>
+  <img id="thumb" alt="" hidden>
+  <p id="msg" class="msg" hidden></p>
+  <nav id="buttons">
+    <button id="btnShot">Take photo</button>
+    <button id="btnFull">Fullscreen</button>
+    <button id="btnDim">Dim</button>
+    <button id="btnSettings">Settings</button>
+    <button id="btnPrep">Phone prep</button>
+  </nav>
+</main>
+
+<section id="settings" class="panel" hidden>
+  <h2>Settings</h2>
+  <label>Camera <select id="camSelect"></select></label>
+  <label>Lock orientation
+    <select id="orientSelect">
+      <option value="any">Don't lock</option><option value="current">Current</option>
+      <option value="portrait">Portrait</option><option value="landscape">Landscape</option>
+    </select>
+  </label>
+  <p class="small" id="aboutText"></p>
+  <p><button id="btnReconnect">Check for a new server address</button></p>
+  <p><button id="btnForget" class="danger">Forget pairing</button></p>
+  <p><button id="btnCloseSettings" class="big">Done</button></p>
+</section>
+
+<section id="prep" class="panel" hidden>
+  <h2>Phone prep checklist</h2>
+  <p class="small">A few settings keep an old phone taking photos reliably for weeks. Tick them off once.</p>
+  <details id="prepAndroid"><summary>Android (Chrome)</summary>
+    <ul class="check">
+      <li><label><input type="checkbox"> Settings, Apps, Chrome, Battery: <b>Unrestricted</b> (not Optimized).</label></li>
+      <li><label><input type="checkbox"> Developer options (tap Build number 7 times): turn on <b>Stay awake</b> (screen stays on while charging).</label></li>
+      <li><label><input type="checkbox"> Play Store: turn off auto-update apps (or Wi-Fi only at night). Turn off <b>auto restart</b> / scheduled restarts if your phone has them.</label></li>
+      <li><label><input type="checkbox"> Battery: turn on <b>Protect battery / Adaptive charging / 80% limit</b> if offered.</label></li>
+      <li><label><input type="checkbox"> Lock screen rotation (quick settings), then use Fullscreen here.</label></li>
+      <li><label><input type="checkbox"> Chrome menu, <b>Add to Home screen</b> (Install app) and open it from there.</label></li>
+    </ul>
+  </details>
+  <details id="prepIOS"><summary>iPhone / iPad (Safari)</summary>
+    <ul class="check">
+      <li><label><input type="checkbox"> Settings, Display &amp; Brightness, Auto-Lock: <b>Never</b>.</label></li>
+      <li><label><input type="checkbox"> Settings, Battery: <b>Low Power Mode off</b>.</label></li>
+      <li><label><input type="checkbox"> Settings, Battery, Charging: <b>Optimized Battery Charging</b> or the 80% limit on.</label></li>
+      <li><label><input type="checkbox"> Settings, Apps, Safari, Camera: <b>Allow</b> (so a new server address doesn't ask again).</label></li>
+      <li><label><input type="checkbox"> Settings, Accessibility, <b>Guided Access</b> on; triple-click the side button on this page to keep it up.</label></li>
+      <li><label><input type="checkbox"> Share, <b>Add to Home Screen</b>, then open it from there.</label></li>
+    </ul>
+  </details>
+  <details open><summary>Heat and placement</summary>
+    <ul class="check">
+      <li><label><input type="checkbox"> Keep the phone out of the grow light's direct heat and away from misting/humidity.</label></li>
+      <li><label><input type="checkbox"> Give it airflow: no case, not lying on a warm surface, not sealed in the tent.</label></li>
+      <li><label><input type="checkbox"> Check it every week or two for a <b>swollen battery</b> (bulging back, screen lifting). Unplug and retire it if so.</label></li>
+      <li><label><input type="checkbox"> Mount it firmly so every photo has the same framing.</label></li>
+    </ul>
+  </details>
+  <p><button id="btnPrepDone" class="big">Done</button></p>
+</section>
+
+<canvas id="canvas" hidden></canvas>
+<script src="/app/db.js"></script>
+<script src="/app/app.js"></script>
+</body>
+</html>

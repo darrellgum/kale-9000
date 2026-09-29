@@ -1,0 +1,20 @@
+# Alternative without sudo: a per-user service.
+#   mkdir -p ~/.config/systemd/user && cp kalebridge-user.service ~/.config/systemd/user/kalebridge.service
+#   edit ExecStart below to point at your copy, then:
+#   systemctl --user daemon-reload && systemctl --user enable --now kalebridge
+#   sudo loginctl enable-linger $USER     # keeps it running when you are logged out (needs sudo once)
+[Unit]
+Description=KALE 9000 reference bridge (user service)
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 %h/kalebridge/kalebridge.py run
+Restart=always
+RestartSec=10
+UMask=0077
+
+[Install]
+WantedBy=default.target

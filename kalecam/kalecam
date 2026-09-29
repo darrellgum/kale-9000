@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Thin launcher: run the CLI with the project's venv python (falls back to system python3).
+DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+PY="$DIR/venv/bin/python"; [ -x "$PY" ] || PY=python3
+exec "$PY" "$DIR/kalecam_cli.py" "$@"

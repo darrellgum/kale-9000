@@ -1,0 +1,12 @@
+# runtime data (never commit: contains secrets, photos, logs)
+kalecam/config.json
+kalecam/secrets/
+kalecam/state/
+kalecam/logs/
+kalecam/bin/
+kalecam/venv/
+kalecam/test-results/
+kalecam/pairing-qr*.png
+__pycache__/
+*.pyc
+/dist/

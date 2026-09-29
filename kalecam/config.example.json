@@ -1,0 +1,46 @@
+{
+  "port": 8765,
+  "photo_root": "/workspace/grow-photos",
+  "default_plant": "plant-01",
+  "default_camera": "phone-1",
+  "camera_plants": {},
+  "camera_suffix": true,
+  "strip_exif": true,
+  "timezone": null,
+  "schedule": {
+    "enabled": true,
+    "interval_min": 30,
+    "start": "06:00",
+    "end": "22:00"
+  },
+  "capture": {
+    "facing": "environment",
+    "ideal_width": 4096,
+    "ideal_height": 3072,
+    "use_image_capture": true,
+    "jpeg_max_bytes": 3500000,
+    "jpeg_quality": 0.92,
+    "keep_camera_open": true,
+    "warmup_ms": 1500
+  },
+  "heartbeat_s": 60,
+  "poll_hold_s": 25,
+  "migrate": "sticky",
+  "dim_preview": false,
+  "orientation": "any",
+  "republish_s": 3600,
+  "rendezvous": [
+    {
+      "type": "ntfy",
+      "base": "https://ntfy.sh"
+    },
+    {
+      "type": "ntfy",
+      "base": "https://ntfy.envs.net"
+    },
+    {
+      "type": "textdb",
+      "base": "https://textdb.online"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+# The reference bridge needs NOTHING beyond the Python 3.9+ standard library.
+#
+# Optional: if the `cryptography` package is installed, it is used for AES-GCM instead of the
+# built-in pure-Python implementation (same result, faster; only matters for tiny rendezvous
+# messages, so you do not need it). Tested with:
+# cryptography==43.0.3

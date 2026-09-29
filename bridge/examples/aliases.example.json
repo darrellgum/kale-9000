@@ -1,0 +1,30 @@
+{
+  "_comment": "Copy the entries you need into ~/.config/kalebridge/aliases.json. Keep that file mode 600: it can hold device passwords. Unused aliases stay null.",
+
+  "light": {"driver": "shelly_gen2", "host": "device-50.lan", "channel": 0, "password": "your-shelly-password"},
+  "fan":   {"driver": "tasmota", "host": "device-51.lan"},
+  "pump":  null,
+
+  "pump_policy": {
+    "enabled": false,
+    "max_run_s": 30,
+    "max_daily_s": 180,
+    "min_interval_s": 3600,
+    "sensors": {
+      "float": {"type": "http_json", "url": "http://device-60.lan/rpc/Input.GetStatus?id=0", "path": "state", "ok_when": true},
+      "leak":  {"type": "http_json", "url": "http://device-61.lan/status", "path": "flood", "ok_when": false},
+      "soil":  {"type": "http_json", "url": "http://device-62.lan/json", "path": "moisture", "ok_below": 35}
+    }
+  },
+
+  "_examples": {
+    "shelly_gen1 (Shelly 1 / 1PM / Plug S)": {"driver": "shelly_gen1", "host": "device-52.lan", "channel": 0, "user": "admin", "password": "optional"},
+    "shelly_gen2 (Plus / Pro / Gen3 / Plug US)": {"driver": "shelly_gen2", "host": "device-53.lan", "channel": 0, "password": "optional"},
+    "tasmota, single relay": {"driver": "tasmota", "host": "device-54.lan"},
+    "tasmota, relay 2 of a power strip, web password": {"driver": "tasmota", "host": "device-55.lan", "channel": 2, "user": "admin", "password": "optional"},
+    "kasa (EXPERIMENTAL, older firmware only)": {"driver": "kasa", "host": "device-56.lan"},
+    "kasa strip outlet 3 (0-based index 2)": {"driver": "kasa", "host": "device-57.lan", "channel": 2},
+    "home assistant": {"driver": "homeassistant", "url": "http://homeassistant.local:8123", "token": "long-lived-access-token", "entity_id": "switch.tent_fan"},
+    "dummy (dry runs; remembers state in a file)": {"driver": "dummy", "state_file": "/tmp/kalebridge-fan.json"}
+  }
+}
