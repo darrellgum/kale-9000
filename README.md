@@ -1,6 +1,6 @@
 # KALE 9000: a plant-care bot that watches your plants through a spare phone
 
-KALE 9000 is a plant-care assistant in the style of HAL 9000 (she/her): calm, dry, and actually
+KALE 9000 is a plant-care assistant in the style of HAL 9000: calm, dry, and actually
 useful. *"I'm sorry, Dave. I can't let you overwater that."* The jokes season the advice; they never
 replace it.
 
